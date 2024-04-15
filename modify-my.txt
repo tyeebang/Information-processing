@@ -1,0 +1,164 @@
+<%@page import="java.sql.ResultSet"%>
+<%@page import="java.sql.PreparedStatement"%>
+<%@ include file="./db.jsp" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>index</title>
+<link rel="stylesheet" href="./style.css">
+<style>
+	section {
+		width: 100%;
+		height: calc(100vh - 100px);
+		margin-top: 70px;
+		background-color: lightgrey;
+	}
+	
+	section h2 {
+		text-align: center;
+	}
+	
+	form {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+	}
+</style>
+</head>
+<body>
+<script type="text/javascript" src="./check.js"></script>
+	<jsp:include page="./header.jsp"></jsp:include>
+	
+	<section>
+		<h2><b>교과목 수정</b></h2>
+		
+		
+		<form action="./m_action.jsp" name="frm2">
+			<table border="1">
+				<%
+					request.setCharacterEncoding("UTF-8");
+					String c_id = request.getParameter("c_id");
+					try {
+						String sql = "select * from TBL_COURSE_202301 where c_id = ?";
+						PreparedStatement pstmt = conn.prepareStatement(sql);
+						
+						pstmt.setString(1, c_id);
+						
+						ResultSet rs = pstmt.executeQuery();
+						
+						rs.next();
+						
+						String c_name = rs.getString(2);
+						String credit = rs.getString(3);
+						String l_id = rs.getString(4);
+						String week = rs.getString(5);
+
+						String start_hour = rs.getString(6);
+						while(start_hour.length() < 4) {
+							start_hour = "0" + start_hour;
+						}
+						String end_hour = rs.getString(7);
+						while(end_hour.length() < 4) {
+							end_hour = "0" + end_hour;
+						}
+						%>
+				<tr>
+					<td style="width: 150px">과목코드</td>
+					<td><input type="text" name="c_id" value="<%= c_id %>" readonly style="width: 250px;"></td>
+				</tr>
+				
+				<tr>
+					<td style="width: 150px">과목명</td>
+					<td><input type="text" name="c_name" value="<%= c_name %>" style="width: 250px;"></td>
+				</tr>
+				
+				<tr>
+					<td style="width: 150px">학점</td>
+					<td><input type="text" name="credit" value="<%= credit %>" style="width: 250px;"></td>
+				</tr>
+				
+				<tr>
+					<td style="width: 150px">담강교사</td>
+					<td>
+						<select name="l_id" id="l_id" style="width: 250px;">
+							<option value="">담당 교사</option>
+							<option value="1" <% if(l_id.equals("1")){
+								out.println("selected");
+							} %>>[1] 김교수</option>
+							<option value="2" <% if(l_id.equals("2")){
+								out.println("selected");
+							} %>>[2] 이교수</option>
+							<option value="3" <% if(l_id.equals("3")){
+								out.println("selected");
+							} %>>[3] 박교수</option>
+							<option value="4" <% if(l_id.equals("4")){
+								out.println("selected");
+							} %>>[4] 우교수</option>
+							<option value="5" <% if(l_id.equals("5")){
+								out.println("selected");
+							} %>>[5] 최교수</option>
+							<option value="6" <% if(l_id.equals("6")){
+								out.println("selected");
+							} %>>[6] 임교수</option>
+						</select> 
+					</td>
+				</tr>
+				
+				<tr>
+					<td>요일</td>
+					<td>
+						<input type="radio" name="week" value="1" <%if(week.equals("1")) {
+							out.println("selected");
+						}%>>월
+						<input type="radio" name="week" value="2" <%if(week.equals("2")) {
+							out.println("selected");
+						}%>>화
+						<input type="radio" name="week" value="3" <%if(week.equals("3")) {
+							out.println("selected");
+						}%>>수
+						<input type="radio" name="week" value="4" <%if(week.equals("4")) {
+							out.println("selected");
+						}%>>목
+						<input type="radio" name="week" value="5" <%if(week.equals("5")) {
+							out.println("selected");
+						}%>>금
+					</td>
+				</tr>
+				
+				<tr>
+					<td>시작 시간</td>
+					<td>
+						<input type="text" name="start_hour" value="<%= start_hour%>" style="width: 250px;">
+					</td>
+				</tr>
+				
+				<tr>
+					<td>종료 시간</td>
+					<td>
+						<input type="text" name="end_hour" value="<%= end_hour%>" style="width: 250px;">
+					</td>
+				</tr>
+				
+				<tr>
+					<td colspan="2">
+						<input type="button" value="수정" onclick="modify()"> &nbsp;
+						<input type="button" value="취소" onclick="res()">
+					</td>
+				</tr>
+						<%						
+					} catch(Exception e) {
+						e.printStackTrace();
+					}
+				%>
+			</table>
+		</form>
+	</section>
+	
+	<jsp:include page="./footer.jsp"></jsp:include> 
+	
+</body>
+</html>
